@@ -12,7 +12,10 @@ RUN apt-get install -y \
     libtool \
     m4 \
     net-tools \
-    pkg-config
+    pkg-config \
+    libjson-c-dev \
+    libcurl4-openssl-dev \
+    doxygen
 
 # OpenSSL
 ARG openssl_name=openssl-1.1.0h
@@ -26,10 +29,10 @@ RUN make install
 RUN openssl version
 
 # IBM's Software TPM 2.0
-ARG ibmtpm_name=ibmtpm1119
+ARG ibmtpm_name=ibmtpm1628
 WORKDIR /tmp
 ADD "https://downloads.sourceforge.net/project/ibmswtpm2/$ibmtpm_name.tar.gz" .
-RUN sha256sum $ibmtpm_name.tar.gz | grep ^b9eef79904e276aeaed2a6b9e4021442ef4d7dfae4adde2473bef1a6a4cd10fb
+# RUN sha256sum $ibmtpm_name.tar.gz | grep ^b9eef79904e276aeaed2a6b9e4021442ef4d7dfae4adde2473bef1a6a4cd10fb
 RUN mkdir -p $ibmtpm_name
 RUN tar xvf $ibmtpm_name.tar.gz -C $ibmtpm_name
 WORKDIR $ibmtpm_name/src
@@ -45,9 +48,9 @@ RUN apt-get install -y \
     uthash-dev
 
 # TPM2-TSS
-ADD "https://github.com/tpm2-software/tpm2-tss/archive/2.0.1.tar.gz" /tmp
-RUN cd /tmp && tar xvf 2.0.1.tar.gz
-WORKDIR /tmp/tpm2-tss-2.0.1
+ADD "https://github.com/tpm2-software/tpm2-tss/archive/2.4.1.tar.gz" /tmp
+RUN cd /tmp && tar xvf 2.4.1.tar.gz
+WORKDIR /tmp/tpm2-tss-2.4.1
 RUN ./bootstrap
 RUN ./configure --prefix=/usr
 RUN make -j$(nproc)
@@ -60,9 +63,9 @@ RUN apt-get install -y \
     libglib2.0-dev
 
 # TPM2-ABRMD
-ADD "https://github.com/tpm2-software/tpm2-abrmd/archive/2.0.2.tar.gz" /tmp
-RUN cd /tmp && tar xvf 2.0.2.tar.gz
-WORKDIR /tmp/tpm2-abrmd-2.0.2
+ADD "https://github.com/tpm2-software/tpm2-abrmd/archive/2.3.2.tar.gz" /tmp
+RUN cd /tmp && tar xvf 2.3.2.tar.gz
+WORKDIR /tmp/tpm2-abrmd-2.3.2
 RUN ./bootstrap
 RUN ./configure --with-dbuspolicydir=/etc/dbus-1/system.d --with-udevrulesdir=/usr/lib/udev/rules.d --with-systemdsystemunitdir=/usr/lib/systemd/system --libdir=/usr/lib64 --prefix=/usr
 RUN make -j$(nproc)
@@ -72,9 +75,9 @@ RUN make install
 RUN apt-get install -y \
     libcurl4-gnutls-dev
 # TPM2-TOOLS
-ADD "https://github.com/tpm2-software/tpm2-tools/archive/3.1.2.tar.gz" /tmp
-RUN cd /tmp && tar xvf 3.1.2.tar.gz
-WORKDIR /tmp/tpm2-tools-3.1.2
+ADD "https://github.com/tpm2-software/tpm2-tools/archive/4.1.3.tar.gz" /tmp
+RUN cd /tmp && tar xvf 4.1.3.tar.gz
+WORKDIR /tmp/tpm2-tools-4.1.3
 RUN ./bootstrap
 RUN ./configure --prefix=/usr
 RUN make -j$(nproc)
